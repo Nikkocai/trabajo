@@ -1,0 +1,23 @@
+/*
+#000101 negro
+#F0890D amarillo
+#FEFEFE blanco
+*/
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+.header, .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000101;
+    padding: 1em;
+}
+
+.logo {
+    flex-grow: 1;
+    max-width: 300px;
+}
