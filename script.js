@@ -12,7 +12,7 @@ let totalActualEmpanadas = 0;
 
 pizzasForm.addEventListener("submit", (e)=>{
     e.preventDefault();
-    if(inputPizza.value) {
+    if(inputPizza.value && inputPizza.value != 0) {
         let newPizzas = parseInt(inputPizza.value);
         actualizarTotalPizzas(newPizzas);
         let nuevoInput = document.createElement("LI");
@@ -26,7 +26,7 @@ pizzasForm.addEventListener("submit", (e)=>{
 
 empanadasForm.addEventListener("submit", (e)=>{
     e.preventDefault();
-    if(inputEmpanada.value) {
+    if(inputEmpanada.value && inputEmpanada.value != 0) {
         let newEmpanadas = parseInt(inputEmpanada.value)
         actualizarTotalEmpanadas(newEmpanadas)
         let nuevoInput = document.createElement("LI");
