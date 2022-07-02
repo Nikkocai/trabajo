@@ -7,27 +7,45 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="normalize.css">
     <title>BIG PIZZA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sen&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <header class="header">
         <img class="logo" src="http://bigpizza.com.ar/wp-content/uploads/2020/07/log.png" alt="BIG PIZZA">
     </header>
 
-    
-    <form class="pizzas-form">
-        <label for="pizzas">Pizzas</label>
-        <input type="number" id="input-pizzas">
-    </form>
-
-    <form class="empanadas-form">
-        <label for="empanadas">Empanadas</label>
-        <input type="number" id="input-empanadas">
-    </form>
+    <div class="flex-container">
+        <form class="pizzas-form">
+            <label for="pizzas">Pizzas</label>
+            <input type="number" id="input-pizzas">
+            <button type="submit" class="OK-btn">OK</button>
+        </form>
+        <form class="empanadas-form">
+            <label for="empanadas">Empanadas</label>
+            <input type="number" id="input-empanadas">
+            <button type="submit" class="OK-btn">OK</button>
+        </form>
+        <div class="lista-label">
+            <p>Productos ingresados hasta ahora:</p>
+            <ul class="totales-actuales"></ul>
+        </div>
+        <div class="totales">
+            <b class="b-block">TOTAL:</b>
+            <ul class="totales-actuales">
+                <li class="total-pizzas">Pizzas: </li>
+                <li class="total-empanadas">Empanadas: </li>
+            </ul>
+            <button type="submit">Cargar a la Base de Datos</button>
+        </div>
+    </div>
 
     <footer class="footer">
         <span>Hecho por <b>Nicolás Salvanescki</b></span>
-    </footer>
-    
+    </footer> 
+
     <script src="script.js"></script>
 </body>
 </html>
