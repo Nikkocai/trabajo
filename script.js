@@ -50,13 +50,17 @@ const crearProducto = (tipo, cantidad)=>{
     inputCounter++;
     console.log(inputCounter);
     let nuevoInput = crearProductoDeLista(tipo, cantidad, inputCounter);
+    let div = document.createElement("DIV");
+    div.appendChild(nuevoInput);
     let producto = {
         index : inputCounter,
         tipo,
-        cantidad
+        cantidad,
+        html : div.innerHTML
     }
+    console.log(producto.index);
     localStorage.setItem("Input Counter", inputCounter);
-    localStorage.setItem(`input${inputCounter}`, JSON.stringify(producto));
+    localStorage.setItem(producto.index, JSON.stringify(producto));
     actualTotales.appendChild(nuevoInput);
 }
 
