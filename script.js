@@ -77,7 +77,7 @@ const crearBotonBorrar = (tipo, index) =>{
     console.log(index);
     let borrarBtn = document.createElement("BUTTON");
     borrarBtn.classList.add("borrar-btn");
-    console.log(`Item en index: ${index}, es: ${localStorage.getItem(`input${index}`)}`);
+    console.log(`Item en index: ${index}, es: ${localStorage.getItem(index)}`);
     borrarBtn.addEventListener("click", ()=>{
         let valor = borrarBtn.parentElement.textContent;
         let matches = valor.match(/(\d+)/);
@@ -121,7 +121,7 @@ const cargarProductos = ()=>{
 
     for (let i = 0; i < inputCounter; i++) {
         let producto = JSON.parse(localStorage.getItem(i+1));
-        let nuevoInput = crearProductoDeLista(producto.tipo, producto.cantidad);
+        let nuevoInput = crearProductoDeLista(producto.tipo, producto.cantidad, producto.index);
         actualTotales.appendChild(nuevoInput);
         //actualTotales.appendChild(producto.HTML);
     }
