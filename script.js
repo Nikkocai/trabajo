@@ -12,6 +12,8 @@ let dbBtn = document.querySelector(".db-btn");
 let totalActualPizzas = 0;
 let totalActualEmpanadas = 0;
 
+let listaDeProductos = [];
+
 let inputCounter;
 
 pizzasForm.addEventListener("submit", (e)=>{
@@ -58,9 +60,10 @@ const crearProducto = (tipo, cantidad)=>{
         cantidad,
         html : div.innerHTML
     }
-    console.log(producto.index);
+    listaDeProductos.splice(inputCounter, 0, producto);
+    console.log(listaDeProductos);
     localStorage.setItem("Input Counter", inputCounter);
-    localStorage.setItem(producto.index, JSON.stringify(producto));
+    localStorage.setItem("listaDeProductos", JSON.stringify(listaDeProductos));
     actualTotales.appendChild(nuevoInput);
 }
 
@@ -87,7 +90,11 @@ const crearBotonBorrar = (tipo, index) =>{
         } else if (tipo == "Empanadas") {
             actualizarTotalEmpanadas((-1) * cantidad);
         }
-        localStorage.removeItem(index);
+        
+        listaDeProductos.splice(index - 1, 1);
+        localStorage.setItem("listaDeProductos", JSON.stringify(listaDeProductos));
+        inputCounter--;
+        localStorage.setItem("Input Counter", inputCounter);
         borrarBtn.parentElement.remove();
     });
     return borrarBtn;
@@ -108,7 +115,8 @@ const borrarInput = (borrarBtn)=>{
 const borrarInputs = ()=>{
     for (let i = 0; i < actualTotales.childNodes.length; i++){
         borrarInput(actualTotales.childNodes[i].firstChild);
-        localStorage.removeItem(parseInt(i + 1));
+        listaDeProductos = [];
+        localStorage.setItem("listaDeProductos", JSON.stringify(listaDeProductos));
     }
 }
 
@@ -119,11 +127,11 @@ const cargarProductos = ()=>{
     totalEmpanadas.innerHTML = `Empanadas: <b>${totalActualEmpanadas}</b>`;
     inputCounter = parseInt(localStorage.getItem("Input Counter")) || 0;
 
-    for (let i = 0; i < inputCounter; i++) {
-        let producto = JSON.parse(localStorage.getItem(i+1));
-        let nuevoInput = crearProductoDeLista(producto.tipo, producto.cantidad, producto.index);
-        actualTotales.appendChild(nuevoInput);
-        //actualTotales.appendChild(producto.HTML);
+    if (localStorage.getItem("listaDeProductos")) listaDeProductos = JSON.parse(localStorage.getItem("listaDeProductos"));
+
+    for (producto of listaDeProductos) {
+            let nuevoInput = crearProductoDeLista(producto.tipo, producto.cantidad, producto.index);
+            actualTotales.appendChild(nuevoInput);
     }
 }
 
