@@ -1,8 +1,8 @@
 let actualTotales = document.querySelector(".totales-actuales");
 let pizzasForm = document.querySelector(".pizzas-form");
+let empanadasForm = document.querySelector(".empanadas-form");
 let inputPizza = document.getElementById("input-pizzas");
 let inputEmpanada = document.getElementById("input-empanadas");
-let empanadasForm = document.querySelector(".empanadas-form");
 
 let totalPizzas = document.querySelector(".total-pizzas");
 let totalEmpanadas = document.querySelector(".total-empanadas");
@@ -12,9 +12,81 @@ let dbBtn = document.querySelector(".db-btn");
 let totalActualPizzas = 0;
 let totalActualEmpanadas = 0;
 
-let listaDeProductos = [];
+const IDBRequest = indexedDB.open("productos", 1);
 
-let inputCounter;
+IDBRequest.addEventListener("upgradeneeded", ()=>{
+    const db = IDBRequest.result;
+    db.createObjectStore("productos",{
+        autoIncrement: true
+    });
+});
+
+IDBRequest.addEventListener("success", ()=>{
+    cargarProductos();
+});
+
+IDBRequest.addEventListener("error", ()=>{
+    console.log("ocurrió un error al abrir/crear la base de datos");
+});
+
+const getIDBData = (mode, msg) =>{
+    const db = IDBRequest.result;
+    const IDBTransaction = db.transaction("productos", mode);
+    const objectStore = IDBTransaction.objectStore("productos");
+    IDBTransaction.addEventListener("complete",()=>{
+        console.log(msg);
+    });
+
+    return objectStore;
+}
+
+const cargarProductos = ()=>{
+    const IDBData = getIDBData("readonly");
+    const cursor = IDBData.openCursor();
+    const fragment = document.createDocumentFragment();
+    actualTotales.innerHTML = '';
+    cursor.addEventListener("success", ()=>{
+        if (cursor.result) {
+            let elemento = cargarProducto(cursor.result.key, cursor.result.value);
+            fragment.appendChild(elemento);
+            cursor.result.continue(); //LOOP
+        } else actualTotales.appendChild(fragment);
+    });
+}
+
+const cargarProducto = (key, value)=>{
+    let nuevoInput = document.createElement("LI");
+    nuevoInput.textContent = `${value.tipo}: ${value.cantidad}`
+    let borrarBtn = crearBotonBorrar(key, value);
+    nuevoInput.appendChild(borrarBtn);
+    return nuevoInput;
+}
+
+const crearBotonBorrar = (key, value) =>{
+    let borrarBtn = document.createElement("BUTTON");
+    borrarBtn.classList.add("borrar-btn");
+    borrarBtn.addEventListener("click", ()=>{
+        let cantidad = value.cantidad;
+        if (value.tipo == "Pizzas") {
+            actualizarTotalPizzas((-1) * cantidad);
+        } else if (value.tipo == "Empanadas") {
+            actualizarTotalEmpanadas((-1) * cantidad);
+        }
+        borrarBtn.parentElement.remove();
+        eliminarObjeto(key);
+    });
+    return borrarBtn;
+}
+
+const addObjeto = objeto =>{
+    const IDBData = getIDBData("readwrite", "objeto agregado correctamente");
+    IDBData.add(objeto);
+}
+
+const eliminarObjeto = key =>{
+    const IDBData = getIDBData("readwrite", "objeto eliminado correctamente");
+    IDBData.delete(key);
+}
 
 pizzasForm.addEventListener("submit", (e)=>{
     e.preventDefault();
@@ -49,94 +121,67 @@ const actualizarTotalEmpanadas = (newEmpanadas) =>{
 }
 
 const crearProducto = (tipo, cantidad)=>{
-    inputCounter++;
-    console.log(inputCounter);
-    let nuevoInput = crearProductoDeLista(tipo, cantidad, inputCounter);
-    let div = document.createElement("DIV");
-    div.appendChild(nuevoInput);
     let producto = {
-        index : inputCounter,
         tipo,
-        cantidad,
-        html : div.innerHTML
+        cantidad
     }
-    listaDeProductos.splice(inputCounter, 0, producto);
-    console.log(listaDeProductos);
-    localStorage.setItem("Input Counter", inputCounter);
-    localStorage.setItem("listaDeProductos", JSON.stringify(listaDeProductos));
-    actualTotales.appendChild(nuevoInput);
+
+    addObjeto(producto);
+    cargarProductos();
 }
 
-const crearProductoDeLista = (tipo, cantidad, index)=>{
-    console.log(index);
-    let nuevoInput = document.createElement("LI");
-    nuevoInput.textContent = `${tipo}: ${cantidad}`
-    let borrarBtn = crearBotonBorrar(tipo, index);
-    nuevoInput.appendChild(borrarBtn);
-    return nuevoInput;
-}
-
-const crearBotonBorrar = (tipo, index) =>{
-    console.log(index);
-    let borrarBtn = document.createElement("BUTTON");
-    borrarBtn.classList.add("borrar-btn");
-    console.log(`Item en index: ${index}, es: ${localStorage.getItem(index)}`);
-    borrarBtn.addEventListener("click", ()=>{
-        let valor = borrarBtn.parentElement.textContent;
-        let matches = valor.match(/(\d+)/);
-        let cantidad = matches[0];
-        if (tipo == "Pizzas") {
-            actualizarTotalPizzas((-1) * cantidad);
-        } else if (tipo == "Empanadas") {
-            actualizarTotalEmpanadas((-1) * cantidad);
-        }
-        
-        listaDeProductos.splice(index - 1, 1);
-        localStorage.setItem("listaDeProductos", JSON.stringify(listaDeProductos));
-        inputCounter--;
-        localStorage.setItem("Input Counter", inputCounter);
-        borrarBtn.parentElement.remove();
-    });
-    return borrarBtn;
-}
-
-const borrarInput = (borrarBtn)=>{
-    let valor = borrarBtn.parentElement.textContent;
-    let matches = valor.match(/(\d+)/);
-    let cantidad = matches[0];
-    if (tipo == "Pizzas") {
-        actualizarTotalPizzas((-1) * cantidad);
-    } else if (tipo == "Empanadas") {
-        actualizarTotalEmpanadas((-1) * cantidad);
-    }
-    borrarBtn.parentElement.remove();
-}
-
-const borrarInputs = ()=>{
-    for (let i = 0; i < actualTotales.childNodes.length; i++){
-        borrarInput(actualTotales.childNodes[i].firstChild);
-        listaDeProductos = [];
-        localStorage.setItem("listaDeProductos", JSON.stringify(listaDeProductos));
-    }
-}
-
-const cargarProductos = ()=>{
+const cargarData = () =>{
     totalActualPizzas = parseInt(localStorage.getItem("Pizzas")) || 0;
     totalPizzas.innerHTML = `Pizzas: <b>${totalActualPizzas}</b>`;
     totalActualEmpanadas = parseInt(localStorage.getItem("Empanadas")) || 0;
     totalEmpanadas.innerHTML = `Empanadas: <b>${totalActualEmpanadas}</b>`;
-    inputCounter = parseInt(localStorage.getItem("Input Counter")) || 0;
-
-    if (localStorage.getItem("listaDeProductos")) listaDeProductos = JSON.parse(localStorage.getItem("listaDeProductos"));
-
-    for (producto of listaDeProductos) {
-            let nuevoInput = crearProductoDeLista(producto.tipo, producto.cantidad, producto.index);
-            actualTotales.appendChild(nuevoInput);
-    }
 }
 
 dbBtn.addEventListener("click", ()=>{
-    borrarInputs();
-})
+    borrarTodosLosProductos();
+    cargarABaseDeDatos();
+    actualizarTotales();
+});
 
-cargarProductos();
+const borrarTodosLosProductos = ()=>{
+    const IDBData = getIDBData("readwrite");
+    const cursor = IDBData.openCursor();
+    
+    cursor.addEventListener("success", ()=>{
+        if (cursor.result){
+            eliminarObjeto(cursor.result.key);
+            cursor.result.continue();
+        }
+        else actualTotales.innerHTML = '';
+    });
+}
+
+const cargarABaseDeDatos = ()=>{
+    let date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+
+    let today = `${day}/${month}/${year}`;
+
+    fetch("./data.json",{
+        method : "POST",
+        body : JSON.stringify({
+            date: today,
+            pizzas: totalActualPizzas,
+            empanadas: totalActualEmpanadas
+        }),
+        headers : {"Content-type" : "application/json"}
+    })
+    .then(res => res.json())
+    .then(res => console.log(res))
+
+}
+
+const actualizarTotales = ()=>{
+    localStorage.setItem("Pizzas", 0);
+    localStorage.setItem("Empanadas", 0);
+    cargarData();
+}
+
+cargarData();
