@@ -90,7 +90,7 @@ const eliminarObjeto = key =>{
 
 pizzasForm.addEventListener("submit", (e)=>{
     e.preventDefault();
-    if(inputPizza.value && inputPizza.value != 0) {
+    if(inputPizza.value && inputPizza.value > 0) {
         let cantidad = parseInt(inputPizza.value);
         actualizarTotalPizzas(cantidad);
         crearProducto("Pizzas", cantidad);
@@ -100,7 +100,7 @@ pizzasForm.addEventListener("submit", (e)=>{
 
 empanadasForm.addEventListener("submit", (e)=>{
     e.preventDefault();
-    if(inputEmpanada.value && inputEmpanada.value != 0) {
+    if(inputEmpanada.value && inputEmpanada.value > 0) {
         let cantidad = parseInt(inputEmpanada.value);
         actualizarTotalEmpanadas(cantidad);
         crearProducto("Empanadas", cantidad);
