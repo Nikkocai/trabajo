@@ -25,10 +25,49 @@ body {
 
 .header{
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     background-color: #000101;
     padding: 1em;
+}
+
+.nav {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1rem;
+}
+
+.nav ul {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav ul li {
+    color: #FEFEFE;
+    display: inline-block;
+    margin: 0 1rem;
+    padding: .25rem;
+    text-align: center;
+}
+
+.nav ul li a {
+    color: #fefefe;
+    text-decoration: none;
+}
+
+.pagina-actual {
+    background-color: #F0890D;
+}
+
+.pagina-secundaria {
+    background-color: #888;
 }
 
 .footer {
@@ -87,6 +126,26 @@ label {
     width: 1rem;
     height: 1rem;
     margin-left: 30px;
+}
+
+.tabla{
+    display: block;
+    margin: 1rem;
+    padding-bottom: 3rem;
+    overflow: auto;
+}
+
+.tabla tr td {
+    background-color: #0003;
+}
+
+.primera-fila{
+    background-color: #0004;
+    color: #fefefe;
+}
+
+.primera-fila td {
+    padding: 1rem;
 }
 
 /*
