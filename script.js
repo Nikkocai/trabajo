@@ -138,9 +138,24 @@ const cargarData = () =>{
 }
 
 dbBtn.addEventListener("click", ()=>{
-    borrarTodosLosProductos();
-    cargarABaseDeDatos();
-    actualizarTotales();
+    let date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+
+    let today = `${day}/${month}/${year}`;
+
+    if(!localStorage.getItem(today)) {
+        borrarTodosLosProductos();
+        cargarABaseDeDatos(today);
+        actualizarTotales();
+    } else {
+        if (confirm("Deseas sobreescribir la información ya existente en la base de datos?")){
+            borrarTodosLosProductos();
+            cargarABaseDeDatos(today);
+            actualizarTotales();
+        }
+    }
 });
 
 const borrarTodosLosProductos = ()=>{
@@ -156,26 +171,13 @@ const borrarTodosLosProductos = ()=>{
     });
 }
 
-const cargarABaseDeDatos = ()=>{
-    let date = new Date();
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
+const cargarABaseDeDatos = (today)=>{
+    let data = {
+        "Pizzas" : totalActualPizzas,
+        "Empanadas" : totalActualEmpanadas
+    }
 
-    let today = `${day}/${month}/${year}`;
-
-    fetch("./data.json",{
-        method : "POST",
-        body : JSON.stringify({
-            date: today,
-            pizzas: totalActualPizzas,
-            empanadas: totalActualEmpanadas
-        }),
-        headers : {"Content-type" : "application/json"}
-    })
-    .then(res => res.json())
-    .then(res => console.log(res))
-
+    localStorage.setItem(today, JSON.stringify(data));
 }
 
 const actualizarTotales = ()=>{
