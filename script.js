@@ -150,7 +150,7 @@ dbBtn.addEventListener("click", ()=>{
         cargarABaseDeDatos(today);
         actualizarTotales();
     } else {
-        if (confirm("Deseas sobreescribir la información ya existente en la base de datos?")){
+        if (confirm("Deseas sumar la información actual a la ya existente en la base de datos?")){
             borrarTodosLosProductos();
             cargarABaseDeDatos(today);
             actualizarTotales();
@@ -172,12 +172,26 @@ const borrarTodosLosProductos = ()=>{
 }
 
 const cargarABaseDeDatos = (today)=>{
-    let data = {
-        "Pizzas" : totalActualPizzas,
-        "Empanadas" : totalActualEmpanadas
+    let oldData;
+    if(localStorage.getItem(today) !== null && localStorage.getItem(today) !== undefined && localStorage.getItem(today) !== 0) {
+        oldData = JSON.parse(localStorage.getItem(today));
+        console.log(oldData);
+    } else {
+        oldData = {
+            "Pizzas" : 0,
+            "Empanadas" : 0
+        }
     }
 
-    localStorage.setItem(today, JSON.stringify(data));
+    let pizzas = parseInt(oldData.Pizzas) + parseInt(totalActualPizzas);
+    let empanadas = parseInt(oldData.Empanadas) + parseInt(totalActualEmpanadas);
+
+    let newData = {
+        "Pizzas" : pizzas,
+        "Empanadas" : empanadas
+    }
+
+    localStorage.setItem(today, JSON.stringify(newData));
 }
 
 const actualizarTotales = ()=>{
