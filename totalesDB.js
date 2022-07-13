@@ -25,20 +25,6 @@ const eliminarObjeto = key =>{
     IDBData.delete(key);
 }
 
-const getObjeto = key =>{
-    const db = IDBRequest.result;
-    const IDBTransaction = db.transaction("totales", "readonly");
-    const objectStore = IDBTransaction.objectStore("totales");
-    const cursor = objectStore.openCursor();
-    cursor.addEventListener("success", ()=>{
-        if (cursor.result) {
-            if (cursor.result.key == key) return cursor.result.value;
-        } else {
-            cursor.result.continue();
-        }
-    })
-}
-
 const editarObjeto = (key, objeto) =>{
     const db = IDBRequest.result;
     const IDBTransaction = db.transaction("totales", "readwrite");
@@ -47,14 +33,17 @@ const editarObjeto = (key, objeto) =>{
 }
 
 const dbCargar = (day, pizzas, empanadas)=>{
-    let oldData;
-    
-    if (getObjeto(day)){
-        oldData = getObjeto(day);
-        console.log('oldData: ', oldData);
-    } else {
-        oldData = {"Pizzas" : 0, "Empanadas" : 0};
-    }
+    let oldData = {"Pizzas" : 0, "Empanadas" : 0};
+    const db = IDBRequest.result;
+    const IDBTransaction = db.transaction("totales", "readonly");
+    const objectStore = IDBTransaction.objectStore("totales");
+    const request = objectStore.get(day);
+    request.onerror = e => {
+        console.log('Error: ' + e);
+    };
+    request.onsuccess = e => {
+        oldData = JSON.parse(request.result);
+    };
 
     let newPizzas = parseInt(oldData.Pizzas) + parseInt(pizzas);
     let newEmpanadas = parseInt(oldData.Empanadas) + parseInt(empanadas);
