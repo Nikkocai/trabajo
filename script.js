@@ -1,3 +1,5 @@
+import { dbCargar } from "/totalesDB.js";
+
 let actualTotales = document.querySelector(".totales-actuales");
 let pizzasForm = document.querySelector(".pizzas-form");
 let empanadasForm = document.querySelector(".empanadas-form");
@@ -172,26 +174,7 @@ const borrarTodosLosProductos = ()=>{
 }
 
 const cargarABaseDeDatos = (today)=>{
-    let oldData;
-    if(localStorage.getItem(today) !== null && localStorage.getItem(today) !== undefined && localStorage.getItem(today) !== 0) {
-        oldData = JSON.parse(localStorage.getItem(today));
-        console.log(oldData);
-    } else {
-        oldData = {
-            "Pizzas" : 0,
-            "Empanadas" : 0
-        }
-    }
-
-    let pizzas = parseInt(oldData.Pizzas) + parseInt(totalActualPizzas);
-    let empanadas = parseInt(oldData.Empanadas) + parseInt(totalActualEmpanadas);
-
-    let newData = {
-        "Pizzas" : pizzas,
-        "Empanadas" : empanadas
-    }
-
-    localStorage.setItem(today, JSON.stringify(newData));
+   dbCargar(today, totalActualPizzas, totalActualEmpanadas);
 }
 
 const actualizarTotales = ()=>{
