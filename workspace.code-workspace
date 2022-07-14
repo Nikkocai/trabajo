@@ -1,6 +1,11 @@
 {
 	"folders": [
 		{
+			"name": "big pizza backend",
+			"path": "..\\big pizza backend"
+		},
+		{
+			"name": "big pizza code",
 			"path": "."
 		}
 	]
