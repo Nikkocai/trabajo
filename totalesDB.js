@@ -43,15 +43,14 @@ const dbCargar = (day, pizzas, empanadas)=>{
     };
     request.onsuccess = e => {
         oldData = JSON.parse(request.result);
+        let newPizzas = parseInt(oldData.Pizzas) + parseInt(pizzas);
+        let newEmpanadas = parseInt(oldData.Empanadas) + parseInt(empanadas);
+     
+        let newData = { "Pizzas" : newPizzas, "Empanadas" : newEmpanadas};
+     
+        editarObjeto(day, JSON.stringify(newData));
     };
-
-    let newPizzas = parseInt(oldData.Pizzas) + parseInt(pizzas);
-    let newEmpanadas = parseInt(oldData.Empanadas) + parseInt(empanadas);
- 
-    let newData = { "Pizzas" : newPizzas, "Empanadas" : newEmpanadas};
- 
-    editarObjeto(day, JSON.stringify(newData));
- }
+ };
 
  const cargarDataEnTabla = tabla =>{
     let fragment = document.createDocumentFragment();
